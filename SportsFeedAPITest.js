@@ -15,8 +15,9 @@ $(document).ready(function() {
     success: function(response)
     {
 
+    var gameNum = -1;//set so that I can match array numbers from MLB Statcast Api
 
-    function game(i)
+    function gameOpp(i) //displays the data needed
       {
       var games = response.games[i].schedule.id;
       var teamId = response.games[i].schedule;
@@ -24,17 +25,18 @@ $(document).ready(function() {
       var homeAb = teamId.homeTeam.abbreviation;
       var awayId = teamId.awayTeam.id;
       var homeId = teamId.homeTeam.id;
-        if(awayId == 120 || homeId == 120)
+
+        if(awayId == 120 || homeId == 120)//determine if a game is against a certain opponent
           {
-            return $('.todaysGames').append(`<p>${games} and home ${homeId} ${homeAb} and away ${awayId} ${awayAb} ${i}</p>`);
+            gameNum++;
+            return $('.todaysGames').append(`<p>${games} and home ${homeId} ${homeAb} and away ${awayId} ${awayAb} ${i} ${gameNum}</p>`);
           };
       //var gamesId = games.schedule.id;
       //console.log('Jared');
       };
-      for(i=0; i<response.games.length; i++)
+      for(i=0; i<response.games.length; i++)//filters through all games in a teams schedule then runs the gameOpp function to find games only against certain opponents
         {
-
-          game(i);
+          gameOpp(i);
         };
 
      }

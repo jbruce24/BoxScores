@@ -29,16 +29,24 @@ $(document).ready(function() {
         if(awayId == 120 || homeId == 120)//determine if a game is against a certain opponent
           {
             gameNum++;
-            return $('.todaysGames').append(`<p>${games} and home ${homeId} ${homeAb} and away ${awayId} ${awayAb} ${i} ${gameNum}</p>`);
+            $('.todaysGames').append(`<p>${games} and home ${homeId} ${homeAb} and away ${awayId} ${awayAb} ${i} ${gameNum}</p>`);
+            return games;
           };
       //var gamesId = games.schedule.id;
       //console.log('Jared');
       };
+
+//this is the next part i'm on.
+      function lineups(x)
+      {
+          $('.lineups').append(`<p></p>`);
+      }
+
       for(i=0; i<response.games.length; i++)//filters through all games in a teams schedule then runs the gameOpp function to find games only against certain opponents
         {
-          gameOpp(i);
+          var game = gameOpp(i);
+          lineups(game);
         };
-
      }
   });
 });

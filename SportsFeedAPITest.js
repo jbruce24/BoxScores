@@ -42,6 +42,7 @@ $(document).ready(function() {
               if(gameNum == gID)
               {
                 $('.todaysGames').append(`<p>${games} and home ${homeId} ${homeAb} and away ${awayId} ${awayAb} ${i} ${gameNum} ${teamId.startTime} ${aAb} ${hAb} ${gID} </p>`);
+                console.log(`${homeId}`);
               }
           };
       //var gamesId = games.schedule.id;
@@ -51,8 +52,8 @@ $(document).ready(function() {
 function lineups(x, gID)
 {
   $.ajax({
-      url: 'https://statsapi.mlb.com/api/v1/schedule/?sportId=1&teamId=137&opponentId=115&startDate=03/28/2018&endDate=09/30/2018&hydrate=linescore',
-      //url: 'https://statsapi.mlb.com/api/v1/schedule/?sportId=1&teamId=' + hID + '&opponentId=' + aID + '&startDate=03/29/2018&endDate=09/30/2018&hydrate=linescore',
+      //url: 'https://statsapi.mlb.com/api/v1/schedule/?sportId=1&teamId=137&opponentId=115&startDate=03/28/2018&endDate=09/30/2018&hydrate=linescore',
+      url: 'https://statsapi.mlb.com/api/v1/schedule/?sportId=1&teamId=' + hID + '&opponentId=' + aID + '&startDate=03/29/2018&endDate=09/30/2018&hydrate=linescore',
       type: 'GET',
       data:
       {
@@ -60,7 +61,7 @@ function lineups(x, gID)
       },
     success: function(response)
       {
-          //var games = response.dates[0].games[gId];
+          var games = response.dates[0].games[gId];
           //return response.totalGames-1;
       }
     });

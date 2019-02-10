@@ -1,62 +1,33 @@
 $(document).ready(function() {
-//set date variables to use in API calls
-var today = new Date();
-var dd = today.getDate()-1;
-var mm = today.getMonth()+1;
-var yyyy = today.getFullYear();
-var day1 = mm+"/"+dd+"/"+yyyy;
-var url_string = window.location.href;
-var url = new URL(url_string);
-var hID = url.searchParams.get("homeid");
-var aID = url.searchParams.get("awayid");
+    //set date variables to use in API calls
+    var today = new Date();
+    var dd = today.getDate() - 1;
+    var mm = today.getMonth() + 1;
+    var yyyy = today.getFullYear();
+    var day1 = mm + "/" + dd + "/" + yyyy;
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var hID = url.searchParams.get("homeid");
+    var aID = url.searchParams.get("awayid");
 
-$.ajax({//this api call gets the info for the games based on a date criteria
-      url: 'https://statsapi.mlb.com/api/v1/schedule/?sportId=1&teamId='+hID+'&opponentId='+aID+'&startDate=04/01/2018&endDate=09/30/2018&hydrate=linescore',
+    function Games(game) {
+      var gameID = game[0].gamePk;
+      var aTeam = game[0].teams.away.team.name;
+      var hTeam = game[0].teams.home.team.name;
 
-      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
-      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=04/02/2018&endDate=09/28/2018&',
-      type: 'GET',
-      data:
-      {
-        format: 'json'
-      },
-    success: function(response) {
-for(var i=0; i <response.totalGames; i++){
+      $('.todaysGames').append(`<div class="game" data-gameid="${gameID}"><h3 class="game_title">${aTeam} and ${hTeam}</h3><div class="boxscore"></div></div>`);
 
-        var games1 = response.dates[i].games;
+      return game[0].link;
+    }
 
-        function gameID(i)
-          {
-            var gameID = games[0].gamePk;
-            return gameID;
-          }
-
-      function Games(i)
-        {
-          var gameID = games1[0].gamePk;
-          var aTeam = games1[0].teams.away.team.name;
-          var hTeam = games1[0].teams.home.team.name;
-
-          return $('.todaysGames').append(`<p>${aTeam} and ${hTeam} and ${gameID}</p>`);
-        }
-
-
-
-
-        //Games(i);
-      //};// this closes the initial for loop for total games
-
-       function Scores()
-      {
+    function Scores(gamelink, gameNum) {
       $.ajax({
-        url: 'https://statsapi.mlb.com:443/'+games1[0].link,
+        url: 'https://statsapi.mlb.com:443/' + gamelink,
         type: 'GET',
-        data:
-        {
-          format: 'json'
+        data: {
+            format: 'json'
         },
-        success: function(response)
-        {
+        success: function(response) {
           var innings = response.liveData.linescore.innings;
           var Score = response.liveData.linescore;
           var hTotal = parseInt(Score.home.runs);
@@ -69,31 +40,40 @@ for(var i=0; i <response.totalGames; i++){
           var date = response.gameData.datetime.timeDate;
           var gameId = response.gameData.game.pk;
           var dates = response.gameData.dates;
-          var games = [gameId];
-          //for(i=0; i < dates.length; i++)
-        //  {
-            //return $('.scores').append('jared');
-            //return $('.scores').append(`<p>${setTimeout('games.sort()',5000)}</p>`);
-            return $('.scores').append(`<p>${games.sort()}</p>`);
+          var awayAb = response.gameData.teams.away.fileCode;
+          var homeAb = response.gameData.teams.home.fileCode;
+          var dateId = response.games;
 
+          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<p>This is the Game ID: ${gameId}.`);
+          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<a href="SportsFeedTest.html?homeid=${hTeamID}&awayid=${aTeamID}&homeAb=${homeAb}&awayAb=${awayAb}&gameId=${gameNum}" class="button">More Details</a>`);
           //};
-
-          //return $('.scores').append(`<p>${gameId} ${aTeam} ${aTotal} and ${hTeam} ${hTotal}</p>`);
-
         },
       });
     };
-  Games(i);
-  Scores();//
-  //setTimeout('Scores()',1000);
-   };
 
-  },
+    $.ajax({ //this api call gets the info for the games based on a date criteria
+        url: 'https://statsapi.mlb.com/api/v1/schedule/?sportId=1&teamId=' + hID + '&opponentId=' + aID + '&startDate=03/29/2018&endDate=09/30/2018&hydrate=linescore',
 
-//-----
-      error: function()
-      {
-        $('.errors').text("There was an error processing your request. Please try again.")
-      }
-  });
+        type: 'GET',
+        data: {
+            format: 'json'
+        },
+        success: function(response) {
+            for (var i = 0; i < response.totalGames; i++) {
+
+                var games1 = response.dates[i].games;
+
+                // Games(games1);
+                Scores(Games(games1),i); //
+                //setTimeout('Scores()',1000);
+
+            };
+
+        },
+
+        //-----
+        error: function() {
+            $('.errors').text("There was an error processing your request. Please try again.")
+        }
+    });
 });

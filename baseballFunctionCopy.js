@@ -8,7 +8,7 @@ var day1 = mm+"/"+dd+"/"+yyyy;
 
 $.ajax({
       //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
-      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=05/29/2018&endDate=05/29/2018',
+      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=04/28/2018&endDate=04/28/2018',
       type: 'GET',
       data:
       {

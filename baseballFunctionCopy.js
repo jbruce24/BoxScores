@@ -53,12 +53,14 @@ $.ajax({
             var aTeamID = response.gameData.teams.away.teamID;
             var hTeamID = response.gameData.teams.home.teamID;
             var player = response.liveData.players.allPlayers;
+            var gID = response.gameData.game.pk;
 //creates boxscore
 //---------
 $('#game-'+ x +' .myRow').append(`<th class="i1">1</th><th class="i2">2</th><th class="i3">3</th><th class="i4">4</th><th class="i5">5</th><th class="i6">6</th><th class="i7">7</th><th class="i8">8</th><th class="i9">9</th>`)
 $('#game-'+ x +' .home').append(`<th>${hTeam}</th><td class="h1"></td><td class="h2"></td><td class="h3"></td><td class="h4"></td><td class="h5"></td><td class="h6"></td><td class="h7"></td><td class="h8"></td><td class="h9"></td>`);
 $('#game-'+ x +' .away').append(`<th>${aTeam}</th><td class="r1"></td><td class="r2"></td><td class="r3"></td><td class="r4"></td><td class="r5"></td><td class="r6"></td><td class="r7"></td><td class="r8"></td><td class="r9"></td>`);
-$('#game-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTeamID}" class="button">Matchups</a>`);
+$('#game-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTeamID}" class="button">${gID}</a>`);
+
         for(var i=0; i < innings.length; i++)
         {
           var inning = parseInt(innings[i].ordinalNum);

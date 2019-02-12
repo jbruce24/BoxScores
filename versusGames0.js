@@ -10,15 +10,31 @@ $(document).ready(function() {
     var hID = url.searchParams.get("homeid");
     var aID = url.searchParams.get("awayid");
 
-    function Games(game) {
-      var gameID = game[0].gamePk;
-      var aTeam = game[0].teams.away.team.name;
-      var hTeam = game[0].teams.home.team.name;
+    function Games(game,x) {
+      if(x == 2 )
+      {
+        for(i=1; i <= x; i++)
+        {
+        var gameID = game[i].gamePk;
+        var aTeam = game[i].teams.away.team.name;
+        var hTeam = game[i].teams.home.team.name;
 
-      $('.todaysGames').append(`<div class="game" data-gameid="${gameID}"><h3 class="game_title">${aTeam} and ${hTeam}</h3><div class="boxscore"></div></div>`);
+        $('.todaysGames').append(`<div class="game" data-gameid="${gameID}"><h3 class="game_title">${hTeam} and ${aTeam}</h3><div class="boxscore"></div></div>`);
 
-      return game[0].link;
-    }
+        return game[i].link;
+      };
+      }
+      else
+      {
+        var gameID = game[0].gamePk;
+        var aTeam = game[0].teams.away.team.name;
+        var hTeam = game[0].teams.home.team.name;
+
+        $('.todaysGames').append(`<div class="game" data-gameid="${gameID}"><h3 class="game_title">${hTeam} and ${aTeam}</h3><div class="boxscore"></div></div>`);
+
+        return game[0].link;
+      }
+    };
 
     function Scores(gamelink, gameNum) {
       $.ajax({
@@ -40,8 +56,8 @@ $(document).ready(function() {
           var date = response.gameData.datetime.timeDate;
           var gameId = response.gameData.game.pk;
           var dates = response.gameData.dates;
-          var awayAb = response.gameData.teams.away.fileCode;
-          var homeAb = response.gameData.teams.home.fileCode;
+          var awayAb = response.gameData.teams.away.name.abbrev;
+          var homeAb = response.gameData.teams.home.name.abbrev;
           var dateId = response.games;
 
           $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<p>This is the Game ID: ${gameId}.`);
@@ -62,9 +78,10 @@ $(document).ready(function() {
             for (var i = 0; i < response.totalGames; i++) {
 
                 var games1 = response.dates[i].games;
+                var gamesDates = response.dates[i].totalGames;
 
                 // Games(games1);
-                Scores(Games(games1),i); //
+                Scores(Games(games1,gamesDates),i); //
                 //setTimeout('Scores()',1000);
 
             };

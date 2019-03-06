@@ -36,7 +36,6 @@ $(document).ready(function() {
       var homeId = teamId.homeTeam.id;
 
         if(awayAb == aAb || homeAb == aAb)//determine if a game is against a certain opponent
-        //if(awayId == 138 || homeId == 138)
           {
             gameNum++;
               if(gameNum == gID)
@@ -45,14 +44,12 @@ $(document).ready(function() {
                 console.log(`${homeId}`);
               }
           };
-      //var gamesId = games.schedule.id;
       };
 
 //------------
 function lineups(x, gID)
 {
   $.ajax({
-      //url: 'https://statsapi.mlb.com/api/v1/schedule/?sportId=1&teamId=137&opponentId=115&startDate=03/28/2018&endDate=09/30/2018&hydrate=linescore',
       url: 'https://statsapi.mlb.com/api/v1/schedule/?sportId=1&teamId=' + hID + '&opponentId=' + aID + '&startDate=03/29/2018&endDate=09/30/2018&hydrate=linescore',
       type: 'GET',
       data:
@@ -62,7 +59,6 @@ function lineups(x, gID)
     success: function(response)
       {
           var games = response.dates[0].games[gId];
-          //return response.totalGames-1;
       }
     });
 };

@@ -85,7 +85,6 @@ $('#game-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTeam
               rInnScore = parseInt(innings[i].away);
               }//
 
-        //$('#game-'+ x +' .myRow .i'+(i+1)).append(`${inning}`);
         $('#game-'+ x +' .home .h'+(i+1)).append(`${hInnScore}`);
         $('#game-'+ x +' .away .r'+(i+1)).append(`${rInnScore}`);
         if(i>9)
@@ -112,12 +111,9 @@ $('#game-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTeam
 //----boxscore
 
 //--loops through and creates list of games
-//console.log(games);
     for(var i=0; i < games.length; i++)
       {
-        //Games(i);
-        //$('.container').append('<table id="game-' + i + '" class="score"><thead><tr class="myRow"><th>Innings</th><th class="innScore"></th><th>Total</th></tr></thead><tbody><tr class="away"><th class="awayTeam"></th><td class="awayScore"></td><td class="awayTotal"></td></tr><tr class="home"><th class="homeTeam"></th><td class="homeScore"></td><td class="homeTotal"></td></tr></tbody></table>');
-        $('.tScores').append('<table id="game-' + i + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr>');
+  $('.tScores').append('<table id="game-' + i + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr>');
         boxScore(i);
 
       };

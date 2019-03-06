@@ -36,7 +36,7 @@ $(document).ready(function() {
       }
     };
 
-    function Scores(gamelink, gameNum) {
+    function Scores(gamelink, gameNum, x) {
       $.ajax({
         url: 'https://statsapi.mlb.com:443/' + gamelink,
         type: 'GET',
@@ -61,8 +61,56 @@ $(document).ready(function() {
           var dateId = response.games;
 
           $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<p>This is the Game ID: ${gameId}.`);
+          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append('<p><table id="game-' + x + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr></p>');  
           $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<a href="SportsFeedTest.html?homeid=${hTeamID}&awayid=${aTeamID}&homeAb=${homeAb}&awayAb=${awayAb}&gameId=${gameNum}" class="button">More Details</a>`);
           //};
+//------------ Adding Boxscore
+
+$('#game-'+ x +' .myRow').append(`<th class="i1">1</th><th class="i2">2</th><th class="i3">3</th><th class="i4">4</th><th class="i5">5</th><th class="i6">6</th><th class="i7">7</th><th class="i8">8</th><th class="i9">9</th>`)
+$('#game-'+ x +' .home').append(`<th>${hTeam}</th><td class="h1"></td><td class="h2"></td><td class="h3"></td><td class="h4"></td><td class="h5"></td><td class="h6"></td><td class="h7"></td><td class="h8"></td><td class="h9"></td>`);
+$('#game-'+ x +' .away').append(`<th>${aTeam}</th><td class="r1"></td><td class="r2"></td><td class="r3"></td><td class="r4"></td><td class="r5"></td><td class="r6"></td><td class="r7"></td><td class="r8"></td><td class="r9"></td>`);
+//$('#game-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTeamID}" class="button">${gameId}</a>`);//this is the button from boxScore.html that links to the gamesVsOpp page.  You can use it asa  place holder though since it has the game Id in it.
+
+        for(var i=0; i < innings.length; i++)
+        {
+          var inning = parseInt(innings[i].ordinalNum);
+          var rInnScore = parseInt(innings[i].away);
+          var hInnScore = 0;
+
+
+          if(isNaN(innings[i].home)||innings[i].home == "")//sets home inning score
+              {
+                hInnScore = '-';
+
+              }
+              else{
+              hInnScore = parseInt(innings[i].home);
+            }
+            if(isNaN(innings[i].away)||innings[i].away == "")//sets home inning score
+                {
+                  rInnScore = 0;
+
+                }
+                else{
+              rInnScore = parseInt(innings[i].away);
+              }//
+
+        $('#game-'+ x +' .home .h'+(i+1)).append(`${hInnScore}`);
+        $('#game-'+ x +' .away .r'+(i+1)).append(`${rInnScore}`);
+        if(i>9)
+          {
+            $('#game-'+ x +' .myRow').append(`<th class="i`+i+`">`+i+`</th>`)
+            $('#game-'+ x +' .home').append(`<td class="h`+i+`">`+`${hInnScore}`+`</td>`)
+            $('#game-'+ x +' .away').append(`<td class="r`+i+`">`+`${rInnScore}`+`</td>`)
+
+
+          }
+       };//closes for loop
+        $('#game-'+ x +' .myRow').append(`<th style="display: table-cell;">Total</th>`);
+        $('#game-'+ x +' .home').append(`<th style="display: table-cell;">${hTotal}</th>`);
+        $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>`);
+//This section above creates a boxscore for an individual game between a list of all games between teams
+//------------ Back to old code
         },
       });
     };
@@ -80,9 +128,7 @@ $(document).ready(function() {
                 var games1 = response.dates[i].games;
                 var gamesDates = response.dates[i].totalGames;
 
-                // Games(games1);
-                Scores(Games(games1,gamesDates),i); //
-                //setTimeout('Scores()',1000);
+                Scores(Games(games1,gamesDates),i, i);
 
             };
 

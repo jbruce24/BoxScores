@@ -44,6 +44,7 @@ $(document).ready(function() {
             format: 'json'
         },
         success: function(response) {
+    //--------------------------------------------------------Var list
           var innings = response.liveData.linescore.innings;
           var Score = response.liveData.linescore;
           var hTotal = parseInt(Score.home.runs);
@@ -59,9 +60,30 @@ $(document).ready(function() {
           var awayAb = response.gameData.teams.away.name.abbrev;
           var homeAb = response.gameData.teams.home.name.abbrev;
           var dateId = response.games;
+          var winPitch = response.liveData.linescore.pitchers.win;
+          var losePitch = response.liveData.linescore.pitchers.loss;
+          var savePitch = response.liveData.linescore.pitchers.save;
+          var getWinPlayerId = "ID"+winPitch;
+          var winPitchFirstName = player[getWinPlayerId].name.first;
+          var winPitchLastName = player[getWinPlayerId].name.last;
+          var winName = winPitchFirstName + ' ' + winPitchLastName;
+          var getlosePlayerId = "ID"+losePitch;
+          var losePitchFirstName = player[getlosePlayerId].name.first;
+          var losePitchLastName = player[getlosePlayerId].name.last;
+          var loseName = losePitchFirstName + ' ' + losePitchLastName;
+    //---------------------------------------------------------------
+    if(savePitch == null){
+        saveName = "No Save"
+      }
+      else{
+        var getSavePlayerId = "ID"+savePitch;
+        var savePitchFirstName = player[getSavePlayerId].name.first;
+        var savePitchLastName = player[getSavePlayerId].name.last;
+        var saveName = savePitchFirstName + ' ' + savePitchLastName;
+      }
 
-          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<p>This is the Game ID: ${gameId}.`);
-          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append('<p><table id="game-' + x + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr></p>');  
+          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<p>This is the Game ID: ${gameId}.</p>`);
+          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append('<p><table id="game-' + x + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><p class="pitch">'+ 'WP: ' + winName + '</br>LP: ' + loseName + '</br>Save: '+ saveName + ' ' + '</p></p>');
           $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<a href="SportsFeedTest.html?homeid=${hTeamID}&awayid=${aTeamID}&homeAb=${homeAb}&awayAb=${awayAb}&gameId=${gameNum}" class="button">More Details</a>`);
           //};
 //------------ Adding Boxscore
@@ -106,12 +128,21 @@ $('#game-'+ x +' .away').append(`<th>${aTeam}</th><td class="r1"></td><td class=
 
           }
        };//closes for loop
+
+       //for (i=0; i< player.length; i++)
+      // {
+        // if(winPitch == player[i].id)
+        // $('#game-'+ x + ' .pitch').append(`Win ${winPitch}`);
+      // }
         $('#game-'+ x +' .myRow').append(`<th style="display: table-cell;">Total</th>`);
         $('#game-'+ x +' .home').append(`<th style="display: table-cell;">${hTotal}</th>`);
         $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>`);
+        $(`${winPitchFirstName}`).appendTo('#game-'+ x +' .pitch ');
+
+        console.log(isNaN(savePitch),getWinPlayerId, winPitchFirstName,losePitchFirstName, savePitchFirstName);
 //This section above creates a boxscore for an individual game between a list of all games between teams
 //------------ Back to old code
-        },
+},
       });
     };
 

@@ -19,9 +19,9 @@ $(document).ready(function() {
         var aTeam = game[i].teams.away.team.name;
         var hTeam = game[i].teams.home.team.name;
 
-        $('.todaysGames').append(`<div class="game" data-gameid="${gameID}"><h3 class="game_title">${hTeam} and ${aTeam}</h3><div class="boxscore"></div></div>`);
+        $('.todaysGames').append(`<div class="game" data-gameid="${gameID}"><h3 class="game_title">${aTeam} at ${hTeam}</h3><div class="boxscore"></div></div>`);
 
-        return game[i].link;
+        return gameID;
       };
       }
       else
@@ -30,15 +30,15 @@ $(document).ready(function() {
         var aTeam = game[0].teams.away.team.name;
         var hTeam = game[0].teams.home.team.name;
 
-        $('.todaysGames').append(`<div class="game" data-gameid="${gameID}"><h3 class="game_title">${hTeam} and ${aTeam}</h3><div class="boxscore"></div></div>`);
+        $('.todaysGames').append(`<div class="game" data-gameid="${gameID}"><h3 class="game_title">${aTeam} at ${hTeam}</h3><div class="boxscore"></div></div>`);
 
-        return game[0].link;
+        return gameID;
       }
     };
 
-    function Scores(gamelink, gameNum, x) {
+    function Scores(gameID, gameNum, x) {
       $.ajax({
-        url: 'https://statsapi.mlb.com:443/' + gamelink,
+        url: 'https://statsapi.mlb.com:443/api/v1.1/game/'+gameID+'/feed/live',
         type: 'GET',
         data: {
             format: 'json'
@@ -47,23 +47,25 @@ $(document).ready(function() {
     //--------------------------------------------------------Var list
           var innings = response.liveData.linescore.innings;
           var Score = response.liveData.linescore;
-          var hTotal = parseInt(Score.home.runs);
-          var aTotal = parseInt(Score.away.runs);
+          var hTotal = parseInt(Score.teams.home.runs);
+          var aTotal = parseInt(Score.teams.away.runs);
           var aTeam = response.gameData.teams.away.fileCode;
           var hTeam = response.gameData.teams.home.fileCode;
           var aTeamID = response.gameData.teams.away.teamID;
           var hTeamID = response.gameData.teams.home.teamID;
-          var player = response.liveData.players.allPlayers;
+          var player = response.liveData.players;
           var date = response.gameData.datetime.timeDate;
           var gameId = response.gameData.game.pk;
           var dates = response.gameData.dates;
           var awayAb = response.gameData.teams.away.name.abbrev;
           var homeAb = response.gameData.teams.home.name.abbrev;
           var dateId = response.games;
-          var winPitch = response.liveData.linescore.pitchers.win;
-          var losePitch = response.liveData.linescore.pitchers.loss;
-          var savePitch = response.liveData.linescore.pitchers.save;
-          var getWinPlayerId = "ID"+winPitch;
+          var winPitch = response.liveData.decisions.winner.fullName;
+          var losePitch = response.liveData.decisions.loser.fullName;
+          var saveName = "Mo";
+          //var savePitch = response.liveData.decisions.saving.fullName
+          //var savePitch = response.liveData.decisions.save;
+        /*  var getWinPlayerId = "ID"+winPitch;
           var winPitchFirstName = player[getWinPlayerId].name.first;
           var winPitchLastName = player[getWinPlayerId].name.last;
           var winName = winPitchFirstName + ' ' + winPitchLastName;
@@ -71,19 +73,17 @@ $(document).ready(function() {
           var losePitchFirstName = player[getlosePlayerId].name.first;
           var losePitchLastName = player[getlosePlayerId].name.last;
           var loseName = losePitchFirstName + ' ' + losePitchLastName;
+          */
     //---------------------------------------------------------------
-    if(savePitch == null){
-        saveName = "No Save"
-      }
-      else{
+      /*else{
         var getSavePlayerId = "ID"+savePitch;
         var savePitchFirstName = player[getSavePlayerId].name.first;
         var savePitchLastName = player[getSavePlayerId].name.last;
         var saveName = savePitchFirstName + ' ' + savePitchLastName;
-      }
+      }*/
 
           $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<p>This is the Game ID: ${gameId}.</p>`);
-          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append('<p><table id="game-' + x + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><p class="pitch">'+ 'WP: ' + winName + '</br>LP: ' + loseName + '</br>Save: '+ saveName + ' ' + '</p></p>');
+          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append('<p><table id="game-' + x + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><p class="pitch">'+ 'WP: ' + winPitch + '</br>LP: ' + losePitch + '</br>Save: '+ saveName + ' ' + '</p></p>');
           $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<a href="SportsFeedTest.html?homeid=${hTeamID}&awayid=${aTeamID}&homeAb=${homeAb}&awayAb=${awayAb}&gameId=${gameNum}" class="button">More Details</a>`);
           //};
 //------------ Adding Boxscore
@@ -93,53 +93,47 @@ $('#game-'+ x +' .home').append(`<th>${hTeam}</th><td class="h1"></td><td class=
 $('#game-'+ x +' .away').append(`<th>${aTeam}</th><td class="r1"></td><td class="r2"></td><td class="r3"></td><td class="r4"></td><td class="r5"></td><td class="r6"></td><td class="r7"></td><td class="r8"></td><td class="r9"></td>`);
 //$('#game-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTeamID}" class="button">${gameId}</a>`);//this is the button from boxScore.html that links to the gamesVsOpp page.  You can use it asa  place holder though since it has the game Id in it.
 
-        for(var i=0; i < innings.length; i++)
+for(var i=0; i < innings.length; i++)
+{
+  var inning = parseInt(innings[i].ordinalNum);
+  var rInnScore = parseInt(innings[i].away.runs);
+  var hInnScore = 0;
+
+
+  if(isNaN(innings[i].home.runs))//||innings[i].home.runs == "")//sets home inning score
+      {
+        hInnScore = '-';
+
+      }
+      else{
+      hInnScore = parseInt(innings[i].home.runs);
+    }
+    if(isNaN(innings[i].away.runs)||innings[i].away.runs == "")//sets home inning score
         {
-          var inning = parseInt(innings[i].ordinalNum);
-          var rInnScore = parseInt(innings[i].away);
-          var hInnScore = 0;
+          rInnScore = 0;
+
+        }
+        else{
+      rInnScore = parseInt(innings[i].away.runs);
+      }//
+
+$('#game-'+ x +' .home .h'+(i+1)).append(`${hInnScore}`);
+$('#game-'+ x +' .away .r'+(i+1)).append(`${rInnScore}`);
+if(i>8)
+  {
+    $('#game-'+ x +' .myRow').append(`<th class="i`+(i+1)+`">`+(i+1)+`</th>`)
+    $('#game-'+ x +' .home').append(`<td class="h`+(i+1)+`">`+`${hInnScore}`+`</td>`)
+    $('#game-'+ x +' .away').append(`<td class="r`+(i+1)+`">`+`${rInnScore}`+`</td>`)
 
 
-          if(isNaN(innings[i].home)||innings[i].home == "")//sets home inning score
-              {
-                hInnScore = '-';
+  }
+};//closes for loop
+$('#game-'+ x +' .myRow').append(`<th style="display: table-cell;">Total</th>`);
+$('#game-'+ x +' .home').append(`<th style="display: table-cell;">${hTotal}</th>`);
+$('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>`);
+      //  $(`${winPitchFirstName}`).appendTo('#game-'+ x +' .pitch ');
 
-              }
-              else{
-              hInnScore = parseInt(innings[i].home);
-            }
-            if(isNaN(innings[i].away)||innings[i].away == "")//sets home inning score
-                {
-                  rInnScore = 0;
-
-                }
-                else{
-              rInnScore = parseInt(innings[i].away);
-              }//
-
-        $('#game-'+ x +' .home .h'+(i+1)).append(`${hInnScore}`);
-        $('#game-'+ x +' .away .r'+(i+1)).append(`${rInnScore}`);
-        if(i>9)
-          {
-            $('#game-'+ x +' .myRow').append(`<th class="i`+i+`">`+i+`</th>`)
-            $('#game-'+ x +' .home').append(`<td class="h`+i+`">`+`${hInnScore}`+`</td>`)
-            $('#game-'+ x +' .away').append(`<td class="r`+i+`">`+`${rInnScore}`+`</td>`)
-
-
-          }
-       };//closes for loop
-
-       //for (i=0; i< player.length; i++)
-      // {
-        // if(winPitch == player[i].id)
-        // $('#game-'+ x + ' .pitch').append(`Win ${winPitch}`);
-      // }
-        $('#game-'+ x +' .myRow').append(`<th style="display: table-cell;">Total</th>`);
-        $('#game-'+ x +' .home').append(`<th style="display: table-cell;">${hTotal}</th>`);
-        $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>`);
-        $(`${winPitchFirstName}`).appendTo('#game-'+ x +' .pitch ');
-
-        console.log(isNaN(savePitch),getWinPlayerId, winPitchFirstName,losePitchFirstName, savePitchFirstName);
+        console.log(winPitch);
 //This section above creates a boxscore for an individual game between a list of all games between teams
 //------------ Back to old code
 },
@@ -147,7 +141,7 @@ $('#game-'+ x +' .away').append(`<th>${aTeam}</th><td class="r1"></td><td class=
     };
 
     $.ajax({ //this api call gets the info for the games based on a date criteria
-        url: 'https://statsapi.mlb.com/api/v1/schedule/?sportId=1&teamId=' + hID + '&opponentId=' + aID + '&startDate=03/29/2018&endDate=09/30/2018&hydrate=linescore',
+        url: 'https://statsapi.mlb.com/api/v1/schedule/?sportId=1&teamId=' + hID + '&opponentId=' + aID + '&startDate=03/28/2019&endDate=10/01/2019&hydrate=linescore',
 
         type: 'GET',
         data: {
@@ -159,8 +153,12 @@ $('#game-'+ x +' .away').append(`<th>${aTeam}</th><td class="r1"></td><td class=
                 var games1 = response.dates[i].games;
                 var gamesDates = response.dates[i].totalGames;
 
+                if(games1[0].status.statusCode == 'F'){
                 Scores(Games(games1,gamesDates),i, i);
-
+              }
+                else {
+                  Games(games1,gamesDates);
+                }
             };
 
         },

@@ -34,6 +34,20 @@ $(document).ready(function() {
       var homeAb = String(teamId.homeTeam.abbreviation).toUpperCase();
       var awayId = teamId.awayTeam.id;
       var homeId = teamId.homeTeam.id;
+      var date1 = new Date(teamId.startTime);
+      var year = date1.getFullYear();
+      var month = date1.getMonth()+1;
+      var dt = date1.getDate();
+      //-----------------Adds preceding 0's to dates and month if below 10
+      if (dt < 10) {
+        dt = '0' + dt;
+          }
+      if (month < 10) {
+          month = '0' + month;
+          }
+      //--------------------------
+      var fullDate = year+month+dt;
+
 
         if(awayAb == aAb || homeAb == aAb)//determine if a game is against a certain opponent
           {
@@ -41,12 +55,15 @@ $(document).ready(function() {
               if(gameNum == gID)
               {
                 $('.todaysGames').append(`<p>${games} and home ${homeId} ${homeAb} and away ${awayId} ${awayAb} ${i} ${gameNum} ${teamId.startTime} ${aAb} ${hAb} ${gID} </p>`);
-                console.log(`${homeId}`);
+                var apiID = fullDate+ '-' +awayAb+ '-' +homeAb;
+                console.log(`${apiID}`);
               }
           };
-      };
+
+  };
 
 //------------
+/*
 function lineups(x, gID)
 {
   $.ajax({
@@ -62,6 +79,7 @@ function lineups(x, gID)
       }
     });
 };
+*/
 
       for(i=0; i < response.games.length; i++)//filters through all games in a teams schedule then runs the gameOpp function to find games only against certain opponents
         {

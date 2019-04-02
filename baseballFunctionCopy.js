@@ -58,8 +58,14 @@ $.ajax({
 //---------
 
 // check for final
-if(response.gameData.status.statusCode == 'F')
+if(response.gameData.status.abstractGameCode == 'F')
   $('#game-'+ x +' .myRow .innScore').append('Final');
+else if(response.gameData.status.abstractGameCode == 'L'){
+  if(Score.inningHalf =="Bottom")
+    $('#game-'+ x +' .myRow .innScore').append(`Bot ${Score.currentInningOrdinal}`);
+  else
+    $('#game-'+ x +' .myRow .innScore').append(`Top ${Score.currentInningOrdinal}`);
+}
 
 $('#game-'+ x +' .myRow').append(`<th class="i1">1</th><th class="i2">2</th><th class="i3">3</th><th class="i4">4</th><th class="i5">5</th><th class="i6">6</th><th class="i7">7</th><th class="i8">8</th><th class="i9">9</th>`)
 $('#game-'+ x +' .home').append(`<th>${hTeam}</th><td class="h1"></td><td class="h2"></td><td class="h3"></td><td class="h4"></td><td class="h5"></td><td class="h6"></td><td class="h7"></td><td class="h8"></td><td class="h9"></td>`);

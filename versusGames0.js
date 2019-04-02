@@ -172,7 +172,7 @@ $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>
                 var games1 = response.dates[i].games;
                 var gamesDates = response.dates[i].totalGames;
 
-                if(games1[0].status.statusCode == 'F' || games1[0].status.abstractGameCode == 'L'){
+                if(games1[0].status.abstractGameCode == 'F' || games1[0].status.abstractGameCode == 'L'){
                 Scores(Games(games1,gamesDates),i, i);
               }
                 else {

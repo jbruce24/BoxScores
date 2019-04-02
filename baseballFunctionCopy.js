@@ -121,6 +121,7 @@ $('#game-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTeam
     for(var i=0; i < games.length; i++)
       {
   $('.tScores').append('<table id="game-' + i + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr>');
+
         boxScore(i);
 
       };

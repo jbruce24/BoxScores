@@ -60,9 +60,22 @@ $(document).ready(function() {
           var awayAb = response.gameData.teams.away.name.abbrev;
           var homeAb = response.gameData.teams.home.name.abbrev;
           var dateId = response.games;
+        if (response.gameData.status.abstractGameCode == "L")
+          {
+          var currPitch = response.liveData.linescore.defense.pitcher.fullName;
+          var currBatter = response.liveData.linescore.offense.batter.fullName;
+          var onDeck = response.liveData.linescore.offense.onDeck.fullName;
+        }
+        else{
           var winPitch = response.liveData.decisions.winner.fullName;
           var losePitch = response.liveData.decisions.loser.fullName;
-          var saveName = "Mo";
+        if(response.liveData.decisions.save == null)
+            {var savePitch = "No Save";
+            }
+        else {
+          var savePitch = response.liveData.decisions.save.fullName;
+          };
+        }
           //var savePitch = response.liveData.decisions.saving.fullName
           //var savePitch = response.liveData.decisions.save;
         /*  var getWinPlayerId = "ID"+winPitch;
@@ -83,7 +96,13 @@ $(document).ready(function() {
       }*/
 
           $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<p>This is the Game ID: ${gameId}.</p>`);
-          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append('<p><table id="game-' + x + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><p class="pitch">'+ 'WP: ' + winPitch + '</br>LP: ' + losePitch + '</br>Save: '+ saveName + ' ' + '</p></p>');
+          if (response.gameData.status.abstractGameCode == "F")
+            {
+          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append('<p><table id="game-' + x + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><p class="pitch">'+ 'WP: ' + winPitch + '</br>LP: ' + losePitch + '</br>Save: '+ savePitch + ' ' + '</p></p>');
+        }
+        else {
+          $('.game[data-gameid=' + gameId + ']').children('.boxscore').append('<p><table id="game-' + x + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><p class="pitch">'+ 'Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
+        }
           $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<a href="SportsFeedTest.html?homeid=${hTeamID}&awayid=${aTeamID}&homeAb=${homeAb}&awayAb=${awayAb}&gameId=${gameNum}" class="button">More Details</a>`);
           //};
 //------------ Adding Boxscore
@@ -133,7 +152,7 @@ $('#game-'+ x +' .home').append(`<th style="display: table-cell;">${hTotal}</th>
 $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>`);
       //  $(`${winPitchFirstName}`).appendTo('#game-'+ x +' .pitch ');
 
-        console.log(winPitch);
+        console.log(winPitch,savePitch);
 //This section above creates a boxscore for an individual game between a list of all games between teams
 //------------ Back to old code
 },
@@ -153,7 +172,7 @@ $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>
                 var games1 = response.dates[i].games;
                 var gamesDates = response.dates[i].totalGames;
 
-                if(games1[0].status.statusCode == 'F'){
+                if(games1[0].status.statusCode == 'F' || games1[0].status.abstractGameCode == 'L'){
                 Scores(Games(games1,gamesDates),i, i);
               }
                 else {

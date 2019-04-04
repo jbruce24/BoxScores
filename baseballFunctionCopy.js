@@ -54,6 +54,35 @@ $.ajax({
             var hTeamID = response.gameData.teams.home.id;
             var player = response.liveData.players;
             var gID = response.gameData.game.pk;
+            var dateId = response.games;
+            var gameData = response.gameData;
+            var startTime = gameData.datetime.time + " " + gameData.datetime.ampm;
+
+  //This section of code implements winning/losing/saving pitcher or who is the current pitcher/at bat
+            if (response.gameData.status.abstractGameCode == "L")
+                {
+                  var currPitch = response.liveData.linescore.defense.pitcher.fullName;
+                  var currBatter = response.liveData.linescore.offense.batter.fullName;
+                  var onDeck = response.liveData.linescore.offense.onDeck.fullName;
+                }
+            else if(response.gameData.status.abstractGameCode == "F"){
+              var winPitch = response.liveData.decisions.winner.fullName;
+              var losePitch = response.liveData.decisions.loser.fullName;
+                if(response.liveData.decisions.save == null)
+                  var savePitch = "No Save";
+
+              else {
+                  var savePitch = response.liveData.decisions.save.fullName;
+                    };
+                  }
+            if (response.gameData.status.abstractGameCode == "F")
+                {
+                  $('#gameID-'+ x).append('<p></br><p class="pitch">'+ 'WP: ' + winPitch + '</br>LP: ' + losePitch + '</br>Save: '+ savePitch + ' ' + '</p></p>');
+                }
+            else if(response.gameData.status.abstractGameCode == "L") {
+              $('#gameID-'+ x).append('<p><p class="pitch">'+ 'Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
+              }
+          //};
 //creates boxscore
 //---------
 
@@ -66,12 +95,24 @@ else if(response.gameData.status.abstractGameCode == 'L'){
   else
     $('#game-'+ x +' .myRow .innScore').append(`Top ${Score.currentInningOrdinal}`);
 }
+else
+  $('#game-'+ x +' .myRow .innScore').append(`${startTime}`);
 
-$('#game-'+ x +' .myRow').append(`<th class="i1">1</th><th class="i2">2</th><th class="i3">3</th><th class="i4">4</th><th class="i5">5</th><th class="i6">6</th><th class="i7">7</th><th class="i8">8</th><th class="i9">9</th>`)
-$('#game-'+ x +' .home').append(`<th>${hTeam}</th><td class="h1"></td><td class="h2"></td><td class="h3"></td><td class="h4"></td><td class="h5"></td><td class="h6"></td><td class="h7"></td><td class="h8"></td><td class="h9"></td>`);
-$('#game-'+ x +' .away').append(`<th>${aTeam}</th><td class="r1"></td><td class="r2"></td><td class="r3"></td><td class="r4"></td><td class="r5"></td><td class="r6"></td><td class="r7"></td><td class="r8"></td><td class="r9"></td>`);
+$('#game-'+ x +' .myRow').append(`<th id="i1" class="inning">1</th><th id="i2" class="inning">2</th><th id="i3" class="inning">3</th><th id="i4" class="inning">4</th><th id="i5" class="inning">5</th><th id="i6" class="inning">6</th><th id="i7" class="inning">7</th><th id="i8" class="inning">8</th><th id="i9" class="inning">9</th>`)
+$('#game-'+ x +' .home').append(`<th>${hTeam}</th><td class="inning" id="h1"></td><td class="inning" id="h2"></td><td class="inning" id="h3"></td><td class="inning" id="h4"></td><td class="inning" id="h5"></td><td class="inning" id="h6"></td><td class="inning" id="h7"></td><td class="inning" id="h8"></td><td class="inning" id="h9"></td>`);
+$('#game-'+ x +' .away').append(`<th>${aTeam}</th><td class="inning" id="r1"></td><td class="inning" id="r2"></td><td class="inning" id="r3"></td><td class="inning" id="r4"></td><td class="inning" id="r5"></td><td class="inning" id="r6"></td><td class="inning" id="r7"></td><td class="inning" id="r8"></td><td class="inning" id="r9"></td>`);
 $('#gameID-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTeamID}" class="button">${gID}</a>`);
 
+if(response.gameData.status.abstractGameCode == 'P')
+{
+  var homeProb = response.gameData.probablePitchers.home.fullName;
+  var awayProb = response.gameData.probablePitchers.away.fullName;
+  $('#game-'+ x +' .myRow').append(`<th style="display: table-cell;">Total</th>`);
+  $('#game-'+ x +' .home').append(`<th style="display: table-cell;">0</th>`);
+  $('#game-'+ x +' .away').append(`<th style="display: table-cell;">0</th>`);
+  $('#gameID-'+ x).append('<p><p class="pitch">'+ 'Home Pitcher: ' + homeProb + '</br>Away Pitcher: ' + awayProb + '</p></p>');
+}
+else{
         for(var i=0; i < innings.length; i++)
         {
           var inning = parseInt(innings[i].ordinalNum);
@@ -96,13 +137,13 @@ $('#gameID-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTe
               rInnScore = parseInt(innings[i].away.runs);
               }//
 
-        $('#game-'+ x +' .home .h'+(i+1)).append(`${hInnScore}`);
-        $('#game-'+ x +' .away .r'+(i+1)).append(`${rInnScore}`);
+        $('#game-'+ x +' .home #h'+(i+1)).append(`${hInnScore}`);
+        $('#game-'+ x +' .away #r'+(i+1)).append(`${rInnScore}`);
         if(i>8)
           {
-            $('#game-'+ x +' .myRow').append(`<th class="i`+(i+1)+`">`+(i+1)+`</th>`)
-            $('#game-'+ x +' .home').append(`<td class="h`+(i+1)+`">`+`${hInnScore}`+`</td>`)
-            $('#game-'+ x +' .away').append(`<td class="r`+(i+1)+`">`+`${rInnScore}`+`</td>`)
+            $('#game-'+ x +' .myRow').append(`<th id="i`+(i+1)+`">`+(i+1)+`</th>`)
+            $('#game-'+ x +' .home').append(`<td id="h`+(i+1)+`">`+`${hInnScore}`+`</td>`)
+            $('#game-'+ x +' .away').append(`<td id="r`+(i+1)+`">`+`${rInnScore}`+`</td>`)
 
 
           }
@@ -111,6 +152,7 @@ $('#gameID-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTe
         $('#game-'+ x +' .home').append(`<th style="display: table-cell;">${hTotal}</th>`);
         $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>`);
         console.log(hTeamID,aTeamID);
+      }
        },
       });
     };//closes boxscore
@@ -119,7 +161,7 @@ $('#gameID-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTe
 //--loops through and creates list of games
     for(var i=0; i < games.length; i++)
       {
-  $('.tScores').append('<div id="gameID-' + i +'" class="boxScore"><table id="game-' + i + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr></div>');
+  $('.tScores').append('<div id="gameID-' + i+'" class="boxScore"><table id="game-' + i + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr></div>');
 
         boxScore(i);
 

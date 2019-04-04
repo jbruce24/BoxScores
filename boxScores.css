@@ -1,5 +1,24 @@
 .boxScore {
       display:flex;
       flex-direction: row;
+      margin-left: 1rem;
       margin-bottom: 1rem;
+      align-items: center;
           }
+
+.pitch {
+  margin-left: .5rem;
+  align-items: flex-end;
+}
+
+.inning{
+  width: 1rem;
+}
+
+.innScore{
+  width: 4rem;
+}
+
+.button{
+  margin-left: .5rem;
+}

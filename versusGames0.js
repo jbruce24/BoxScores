@@ -76,24 +76,6 @@ $(document).ready(function() {
           var savePitch = response.liveData.decisions.save.fullName;
           };
         }
-          //var savePitch = response.liveData.decisions.saving.fullName
-          //var savePitch = response.liveData.decisions.save;
-        /*  var getWinPlayerId = "ID"+winPitch;
-          var winPitchFirstName = player[getWinPlayerId].name.first;
-          var winPitchLastName = player[getWinPlayerId].name.last;
-          var winName = winPitchFirstName + ' ' + winPitchLastName;
-          var getlosePlayerId = "ID"+losePitch;
-          var losePitchFirstName = player[getlosePlayerId].name.first;
-          var losePitchLastName = player[getlosePlayerId].name.last;
-          var loseName = losePitchFirstName + ' ' + losePitchLastName;
-          */
-    //---------------------------------------------------------------
-      /*else{
-        var getSavePlayerId = "ID"+savePitch;
-        var savePitchFirstName = player[getSavePlayerId].name.first;
-        var savePitchLastName = player[getSavePlayerId].name.last;
-        var saveName = savePitchFirstName + ' ' + savePitchLastName;
-      }*/
 
           $('.game[data-gameid=' + gameId + ']').children('.boxscore').append(`<p>This is the Game ID: ${gameId}.</p>`);
           if (response.gameData.status.abstractGameCode == "F")

@@ -1,0 +1,6 @@
+.boxScore {
+      display:flex;
+      flex-direction: row;
+      margin-bottom: 1rem;
+      align-items: flex-start;
+          }

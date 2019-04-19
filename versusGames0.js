@@ -51,14 +51,14 @@ $(document).ready(function() {
           var aTotal = parseInt(Score.teams.away.runs);
           var aTeam = response.gameData.teams.away.fileCode;
           var hTeam = response.gameData.teams.home.fileCode;
-          var aTeamID = response.gameData.teams.away.teamID;
-          var hTeamID = response.gameData.teams.home.teamID;
+          var aTeamID = response.gameData.teams.away.id;
+          var hTeamID = response.gameData.teams.home.id;
           var player = response.liveData.players;
           var date = response.gameData.datetime.timeDate;
           var gameId = response.gameData.game.pk;
           var dates = response.gameData.dates;
-          var awayAb = response.gameData.teams.away.name.abbrev;
-          var homeAb = response.gameData.teams.home.name.abbrev;
+          var awayAb = response.gameData.teams.away.teamCode;
+          var homeAb = response.gameData.teams.home.teamCode;
           var dateId = response.games;
         if (response.gameData.status.abstractGameCode == "L")
           {

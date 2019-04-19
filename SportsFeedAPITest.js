@@ -12,7 +12,7 @@ $(document).ready(function() {
   $.ajax
   ({
     type: "GET",
-    url: 'https://api.mysportsfeeds.com/v2.0/pull/mlb/2018-regular/games.json?team='+hAb,
+    url: 'https://api.mysportsfeeds.com/v2.1/pull/mlb/2019-regular/games.json?team='+hAb,
     dataType: 'json',
     async: false,
     headers: {
@@ -54,7 +54,7 @@ $(document).ready(function() {
             gameNum++;
               if(gameNum == gID)
               {
-                $('.todaysGames').append(`<p>${games} and home ${homeId} ${homeAb} and away ${awayId} ${awayAb} ${i} ${gameNum} ${teamId.startTime} ${aAb} ${hAb} ${gID} </p>`);
+                $('.todaysGames').append(`<p>${games} and home (${homeId} ${homeAb}) and away (${awayId} ${awayAb}) ${i} ${gameNum} ${teamId.startTime} ${aAb} ${hAb} ${gID} </p>`);
                 var apiID = fullDate+ '-' +awayAb+ '-' +homeAb;
                 console.log(`${apiID}`);
               }

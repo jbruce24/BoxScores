@@ -161,7 +161,7 @@ else{
 //--loops through and creates list of games
     for(var i=0; i < games.length; i++)
       {
-  $('.tScores').append('<div id="gameID-' + i+'" class="boxScore"><table id="game-' + i + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr></div>');
+  $('.tScores').append('<div id="gameID-' + i+'" class="boxScore"><table id="game-' + i + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr><svg class="counts"></svg></div>');
 
         boxScore(i);
 

@@ -7,8 +7,8 @@ var yyyy = today.getFullYear();
 var day1 = mm+"/"+dd+"/"+yyyy;
 
 $.ajax({
-      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
-      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=04/28/2018&endDate=04/28/2018',
+      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
+      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=04/21/2019&endDate=04/21/2019',
       type: 'GET',
       data:
       {
@@ -57,9 +57,6 @@ $.ajax({
             var dateId = response.games;
             var gameData = response.gameData;
             var startTime = gameData.datetime.time + " " + gameData.datetime.ampm;
-            var strikes = response.liveData.plays.currentPlay.count.strikes;
-            var balls = response.liveData.plays.currentPlay.count.balls;
-            var outs = response.liveData.plays.currentPlay.count.outs;
 
   //This section of code implements winning/losing/saving pitcher or who is the current pitcher/at bat
             if (response.gameData.status.abstractGameCode == "L")
@@ -83,6 +80,8 @@ $.ajax({
                   $('#gameID-'+ x).append('<p></br><p class="pitch">'+ 'WP: ' + winPitch + '</br>LP: ' + losePitch + '</br>Save: '+ savePitch + ' ' + '</p></p>');
                 }
             else if(response.gameData.status.abstractGameCode == "L") {
+              $('.tScores .scoring .counts').clone().appendTo('#gameID-'+ x);
+              $('.counts').css("display","grid");
               $('#gameID-'+ x).append('<p><p class="pitch">'+ 'Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
               }
           //};
@@ -97,43 +96,6 @@ else if(response.gameData.status.abstractGameCode == 'L'){
     $('#game-'+ x +' .myRow .innScore').append(`Bot ${Score.currentInningOrdinal}`);
   else
     $('#game-'+ x +' .myRow .innScore').append(`Top ${Score.currentInningOrdinal}`);
-
-//this next section of code checks to see if a runner occupies a base
-          if(Score.offense.first != null){
-          //if(hTotal === 6){
-            $('#gameID-'+ x +' #countBase #svg_1').css({ fill: "red" });
-            $('#gameID-'+ x +' #countBase #svg_1').hover(function() {
-                //$(this).css("fill","green");
-                $(this).append("<p>Jared</p>");
-              }, function() {
-                $(this).css("fill","green");
-              }
-            );
-          }
-          else if(Score.offense.second != null){
-                  $('#gameID-'+ x +' #countBase #svg_2').css({ fill: "red" });
-                  $('#gameID-'+ x +' #countBase #svg_2').hover(function() {
-                      $(this).append( $( "<span> ***</span>" ) );
-                    }, function() {
-                      $(this).find( "span:last" ).remove();
-                    }
-                  );
-                }
-          else if(Score.offense.third != null){
-                  $('#gameID-'+ x +' #countBase #svg_3').css({ fill: "red" });
-                  $('#gameID-'+ x +' #countBase #svg_3').hover(function() {
-                      $(this).append( $( "<span> ***</span>" ) );
-                    }, function() {
-                      $(this).find( "span:last" ).remove();
-                    }
-                  );
-                }
-
-          if(strikes==='3'){
-            $('#gameID-'+ x +' .count #str3').css({fill: "red"});
-          }
-
-
 }
 else
   $('#game-'+ x +' .myRow .innScore').append(`${startTime}`);
@@ -201,8 +163,8 @@ else{
 //--loops through and creates list of games
     for(var i=0; i < games.length; i++)
       {
-  $('.tScores').append('<div id="gameID-' + i +'" class="boxScore"><table id="game-' + i + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr><div><span style="font-weight:bold; margin-left: .25rem;">S</span> <span class="count" id="str1"></span><span class="count" id="str2"></span><span class="count" id="str3"></span><br><span style="font-weight:bold; margin-left: .25rem;">B</span> <span class="count" id="ball1"></span><span class="count" id="ball2"></span><span class="count" id="ball3"></span><span class="count" id="ball4"></span><br><span style="font-weight:bold; margin-left: .25rem;">O</span> <span class="count" id="out1"></span><span class="count" id="out2"></span><span class="count" id="out3"></span></div></div>');
-  $('#countBase').clone().appendTo('#gameID-'+ i);
+  $('.tScores').append('<div id="gameID-' + i+'" class="boxScore"><table id="game-' + i + '" class="score"><tr class="myRow"><th class="innScore"></th></tr><tr class="away"></tr><tr class="home"></tr></table><tr class="players"></tr></div>');
+
         boxScore(i);
 
       };

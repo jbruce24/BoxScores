@@ -7,8 +7,8 @@ var yyyy = today.getFullYear();
 var day1 = mm+"/"+dd+"/"+yyyy;
 
 $.ajax({
-      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
-      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=04/21/2019&endDate=04/21/2019',
+      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
+      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=04/21/2019&endDate=04/21/2019',
       type: 'GET',
       data:
       {
@@ -81,7 +81,7 @@ $.ajax({
                 }
             else if(response.gameData.status.abstractGameCode == "L") {
               $('.tScores .scoring .counts').clone().appendTo('#gameID-'+ x);
-              $('.counts').css("display","grid");
+              $('#gameID-'+ x + ' .counts').css("display","grid");
               $('#gameID-'+ x).append('<p><p class="pitch">'+ 'Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
               }
           //};

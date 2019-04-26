@@ -80,8 +80,12 @@ $.ajax({
                   $('#gameID-'+ x).append('<p></br><p class="pitch">'+ 'WP: ' + winPitch + '</br>LP: ' + losePitch + '</br>Save: '+ savePitch + ' ' + '</p></p>');
                 }
             else if(response.gameData.status.abstractGameCode == "L") {
-              $('.tScores .scoring .counts').clone().appendTo('#gameID-'+ x);
-              $('#gameID-'+ x + ' .counts').css("display","grid");
+              $('.tScores .scoring .bases').clone().appendTo('#gameID-'+ x);
+              $('#gameID-'+ x + ' .bases').css("display","grid");
+              $('.tScores .scoring .BSO').clone().appendTo('#gameID-'+ x);
+              $('#gameID-'+ x + ' .BSO').css("display","inline");
+              $('.tScores .scoring .count').clone().appendTo('#gameID-'+ x);
+              $('#gameID-'+ x + ' .BSO .count').css("display","inline");
               $('#gameID-'+ x).append('<p><p class="pitch">'+ 'Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
               }
           //};
@@ -122,7 +126,7 @@ else{
           var hInnScore = 0;
 
 
-          if(isNaN(innings[i].home.runs))//||innings[i].home.runs == "")//sets home inning score
+          if(isNaN(innings[i].home.runs))
               {
                 hInnScore = '-';
 

@@ -125,40 +125,52 @@ if(response.gameData.status.abstractGameCode == 'P')
 //-------------------Below Populates data into the boxscore if game is live
 else if(response.gameData.status.abstractGameCode == 'L'){
     //----------Populates bases if runners are on
-          /*var first = 1;
+          var first = 0;
           var seco = 0;
-          var thi = 1;
-*/
+          var thi = 0;
+
           if(Score.offense.first == null)
-            var first = 0;
+            first = 0;
           else
-          {var first = 1;}
+          { first = 1;}
           if(Score.offense.second == null)
-            var seco = 0;
+             seco = 0;
           else
-          {var seco= 1;}
+          {seco= 1;}
           if(Score.offense.third == null)
-            var thi = 0;
+             thi = 0;
           else
-          {var thi= 1;}
+          {thi= 1;}
 
           var base = [first, seco, thi];
 
-          function onBase(x, i){
-            if(x===1){
-              console.log("svg"+i, "set");
+          function onBase(color, i, x){
+    //        for(j=0;j<base.length;j++)
+      //      {
+          //  if(base[j]===1){
+              //console.log(base, base[j],x, "svg_"+i, "set");
+            console.log(x, "svg_"+i, "set");
             //return $('#gameID-'+ x + ' #svg_'+i).css("fill","red");
-            return $('#gameID-' + x + ' .svg_'+i).css("fill","red");
-          }
-            else {
-              console.log("dont set");
-            }
+            return $('#gameID-' + x + ' .svg_'+i).css("fill",color);
+        //  }
+            //else {
+              //console.log(base, base[j],x, "svg_"+i, "dont set");
+            //}
+          //}
 
           }
 
           for(i=0; i<base.length; i++){
-            console.log(base[i],i);
-            onBase(base[i], i);
+            //console.log("These are the values", base[i], i, x);
+            //console.log("On Base function i", i)
+            if(base[i]===1)
+            {
+              var color = "red";
+            }
+            else{
+            var color = "white";
+          }
+            onBase(color, i, x);
           };
     //------------------------ Count
 
@@ -175,7 +187,7 @@ else if(response.gameData.status.abstractGameCode == 'L'){
     }
     for(i=0;i<3;i++){
      BallStrOut(bso[i],Score[bso[i]],x);
-      console.log(bso[i],Score[bso[i]]);
+      //console.log(bso[i],Score[bso[i]]);
 
     }
     //------------------------

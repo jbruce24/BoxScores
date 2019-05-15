@@ -4,6 +4,7 @@
       margin-left: 1rem;
       margin-bottom: 1rem;
       align-items: center;
+      height: 75px;
           }
 
 .pitch {
@@ -21,4 +22,19 @@
 
 .button{
   margin-left: .5rem;
+}
+
+.BSO {
+  
+}
+
+.count {
+  height: 12px;
+  width: 12px;
+  background-color: grey;
+  border-color: black;
+  border-width: thin;
+  border-radius: 50%;
+  margin-left: .25rem;
+  margin-bottom: .35rem;
 }

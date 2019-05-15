@@ -2,7 +2,7 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="baseballFunctionCopy.js"></script>
+    <script type="text/javascript" src="baseballFunctionCopy1.js"></script>
     <link rel="stylesheet" href="boxScores.css">
     <title>Games</title>
     <style>
@@ -27,7 +27,32 @@
       <h1>Todays Boxscores!</h1>
       <label for="boxScore">Here are todays games! Click the matchups button to see other times these teams played each other</label>
       <div class="errors"></div>
-      <div class="tScores"></div>
+      <div class="tScores"><div class="scoring"><svg class="bases" style="display:none;" width="75" height="50" xmlns="http://www.w3.org/2000/svg">
+       <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+
+       <g>
+        <title>background</title>
+        <rect x="-1" y="-1" width="77" height="52" id="canvas_background" fill="#fff"/>
+        <g id="canvasGrid" display="none">
+         <rect id="svg_3" width="100%" height="100%" x="0" y="0" stroke-width="0" fill="url(#gridpattern)"/>
+        </g>
+       </g>
+       <g>
+        <title>Layer 1</title>
+        <rect transform="rotate(45, 60.615, 15.472)" fill="#fff" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x="65.304581" y="19.929457" width="20" height="20" class="svg_0"/>
+        <rect transform="rotate(45, 45.615, 21.472)" fill="#fff" stroke="#000" stroke-width="1.5" x="35.615216" y="11.472325" width="20" height="20" class="svg_1"/>
+        <rect transform="rotate(45, 51.615, 36.472)" fill="#fff" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x="26.838824" y="40.903051" width="20" height="20" class="svg_2"/>
+       </g>
+      </svg>
+      <div class="invisible" style="display:none;">
+      <div class = "BSO"><span class="balls"><span>B: </span><span class="count" id="ball1"></span><span class="count" id="ball2"></span><span class="count" id="ball3"></span><span class="count" id="ball4"></span></span>
+      <br>
+      <span class="strikes"><span>S: </span><span class="count" id="str1"></span><span class="count" id="str2"></span><span class="count" id="str3"></span></span>
+      <br><span class="outs"><span>O: </span><span class="count" id="out1"></span><span class="count" id="out2"></span><span class="count" id="out3"></span></span>
+        </div>
+      </div>
+      </div>
+    </div>
     </div>
   </body>
 </html>

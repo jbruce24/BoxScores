@@ -8,7 +8,7 @@ var day1 = mm+"/"+dd+"/"+yyyy;
 
 $.ajax({
       url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
-      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=05/02/2019&endDate=05/02/2019',
+      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=05/10/2019&endDate=05/10/2019',
       type: 'GET',
       data:
       {
@@ -64,6 +64,7 @@ $.ajax({
                   var currPitch = response.liveData.linescore.defense.pitcher.fullName;
                   var currBatter = response.liveData.linescore.offense.batter.fullName;
                   var onDeck = response.liveData.linescore.offense.onDeck.fullName;
+
                 }
             else if(response.gameData.status.abstractGameCode == "F"){
               var winPitch = response.liveData.decisions.winner.fullName;
@@ -86,7 +87,8 @@ $.ajax({
               //$('#gameID-'+ x + ' .BSO').css("display","inline-block");
               //$('.tScores .scoring .count').clone().appendTo('#gameID-'+ x);
               $('#gameID-'+ x + ' .count').css("display","inline-block");
-              $('#gameID-'+ x).append('<p><p class="pitch">'+ 'Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
+              $('#gameID-'+ x).append('<p>'+ gID +' '+ x + '<p class="pitch">' + ' Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
+
               }
           //};
 //creates boxscore
@@ -121,7 +123,7 @@ if(response.gameData.status.abstractGameCode == 'P')
   $('#gameID-'+ x).append('<p><p class="pitch">'+ 'Home Pitcher: ' + homeProb + '</br>Away Pitcher: ' + awayProb + '</p></p>');
 }
 //-------------------Below Populates data into the boxscore if game is live
-else{
+else if(response.gameData.status.abstractGameCode == 'L'){
     //----------Populates bases if runners are on
           /*var first = 1;
           var seco = 0;
@@ -144,8 +146,9 @@ else{
 
           function onBase(x, i){
             if(x===1){
-              console.log("set");
-            return $('#svg_'+i).css("fill","red");
+              console.log("svg"+i, "set");
+            //return $('#gameID-'+ x + ' #svg_'+i).css("fill","red");
+            return $('#gameID-' + x + ' .svg_'+i).css("fill","red");
           }
             else {
               console.log("dont set");
@@ -172,11 +175,11 @@ else{
     }
     for(i=0;i<3;i++){
      BallStrOut(bso[i],Score[bso[i]],x);
-      console.log(bso[i],Score[bso[i]],x);
+      console.log(bso[i],Score[bso[i]]);
 
     }
     //------------------------
-
+}
         for(var i=0; i < innings.length; i++)
         {
           var inning = parseInt(innings[i].ordinalNum);
@@ -217,8 +220,10 @@ else{
         $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>`);
 
 
-        console.log(hTeamID,aTeamID);
-      }
+        console.log("Home "+ hTeam, "Away " +aTeam);
+        console.log(gID, x);
+      //}
+
        },
       });
     };//closes boxscore

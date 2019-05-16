@@ -8,7 +8,7 @@ var day1 = mm+"/"+dd+"/"+yyyy;
 
 $.ajax({
       url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
-      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=05/10/2019&endDate=05/10/2019',
+      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=05/15/2019&endDate=05/15/2019',
       type: 'GET',
       data:
       {
@@ -144,7 +144,6 @@ $.ajax({
 
               //------------------------ Count
 
-
               var bso = ["balls","strikes","outs"];
 
               function BallStrOut(bso,y,x){
@@ -157,28 +156,63 @@ $.ajax({
               }
               for(i=0;i<3;i++){
                BallStrOut(bso[i],Score[bso[i]],x);
-                //console.log(bso[i],Score[bso[i]]);
 
               }
             }//end game if live
                 //}
             else if(response.gameData.status.abstractGameCode == "F"){
-              var winPitch = response.liveData.decisions.winner.fullName;
-              var losePitch = response.liveData.decisions.loser.fullName;
-                if(response.liveData.decisions.save == null)
-                  var savePitch = "No Save";
-              else {
-                  var savePitch = response.liveData.decisions.save.fullName;
-                    };
-                    $('#gameID-'+ x).append('<p></br><p class="pitch">'+ 'WP: ' + winPitch + '</br>LP: ' + losePitch + '</br>Save: '+ savePitch + ' ' + '</p></p>');
-                    $('#game-'+ x +' .myRow .innScore').append('Final');
+              var winPitch = response.liveData.decisions.winner;
+              var losePitch = response.liveData.decisions.loser;
+              var winPitchName = response.liveData.decisions.winner.fullName;
+              var losePitchName = response.liveData.decisions.loser.fullName;
+              $('#game-'+ x +' .myRow .innScore').append('Final');
+              function pitchRecord(x, link, result){
+              $.ajax({
+                url: 'https://statsapi.mlb.com:443'+link+'/stats?stats=season',
+                type: 'GET',
+                data:
+                {
+                  format: 'json'
+                },
+                  success: function(response)
+                  {
+                    if(result == "save")
+                      $('#gameID-'+x+' .pitch .'+result).append(": S: "+response.stats[0].splits[0].stat.saves+" - O: "+response.stats[0].splits[0].stat.saveOpportunities);
+                    else
+                      $('#gameID-'+x+' .pitch .'+result).append(": "+response.stats[0].splits[0].stat.wins+"-"+response.stats[0].splits[0].stat.losses);
                   }
+                });
+              }
+              if(response.liveData.decisions.save == null){
+                $('#gameID-'+ x).append('<p></br><p class="pitch">'+ '<span class="win">WP: ' + winPitchName + '</span></br><span class="lose">LP: ' + losePitchName + '</span></p></p>');
+                var pitchName = [[winPitch.link, "win"],[losePitch.link,"lose"]];
 
+                for(i=0;i<pitchName.length;i++)
+                {
+                    pitchRecord(x,pitchName[i][0],pitchName[i][1]);
+                }
+}
+                  //var savePitchName = "No Save";
+              else if(response.liveData.decisions.save !== null) {
+                  var savePitch = response.liveData.decisions.save;
+                  var savePitchName = response.liveData.decisions.save.fullName;
+
+                    $('#gameID-'+ x).append('<p></br><p class="pitch">'+ '<span class="win">WP: ' + winPitchName + '</span></br><span class="lose">LP: ' + losePitchName + '</span></br><span class="save">Save: '+ savePitchName + ' ' + '</span></p></p>');
+
+                    var pitchName = [[winPitch.link, "win"],[losePitch.link,"lose"],[savePitch.link,"save"]];
+
+                    for(i=0;i<pitchName.length;i++)
+                    {
+                        pitchRecord(x,pitchName[i][0],pitchName[i][1]);
+                    }
+                  };
+                }
+//goes to else if check for game is final
             else if(response.gameData.status.abstractGameCode == 'P')
                   {
                     var homeProb = response.gameData.probablePitchers.home.fullName;
                     var awayProb = response.gameData.probablePitchers.away.fullName;
-                    $('#gameID-'+ x).append('<p><p class="pitch">'+ 'Home Pitcher: ' + homeProb + '</br>Away Pitcher: ' + awayProb + '</p></p>');
+                    $('#gameID-'+ x).append('<p><p class="pitch">'+ '<span class="home">Home Pitcher: ' + homeProb + '</span></br><span class="away">Away Pitcher: ' + awayProb + '</span></p></p>');
                     $('#game-'+ x +' .myRow .innScore').append(`${startTime}`);
                   }
 //----------------The Below section adds the actual boxscore table

@@ -7,8 +7,8 @@ var yyyy = today.getFullYear();
 var day1 = mm+"/"+dd+"/"+yyyy;
 
 $.ajax({
-      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
-      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=05/10/2019&endDate=05/10/2019',
+      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
+      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=05/15/2019&endDate=05/15/2019',
       type: 'GET',
       data:
       {
@@ -57,6 +57,8 @@ $.ajax({
             var dateId = response.games;
             var gameData = response.gameData;
             var startTime = gameData.datetime.time + " " + gameData.datetime.ampm;
+            var hRecord = response.gameData.teams.home.record.wins+ "-" + response.gameData.teams.home.record.losses;
+            var aRecord = response.gameData.teams.away.record.wins +"-" + response.gameData.teams.away.record.losses;
 
   //This section of code implements winning/losing/saving pitcher or who is the current pitcher/at bat
             if (response.gameData.status.abstractGameCode == "L")
@@ -64,134 +66,164 @@ $.ajax({
                   var currPitch = response.liveData.linescore.defense.pitcher.fullName;
                   var currBatter = response.liveData.linescore.offense.batter.fullName;
                   var onDeck = response.liveData.linescore.offense.onDeck.fullName;
+                  $('.tScores .scoring .bases').clone().appendTo('#gameID-'+ x);
+                  $('#gameID-'+ x + ' .bases').css("display","grid");
+                  $('.tScores .scoring .BSO').clone().appendTo('#gameID-'+ x);
+                  $('#gameID-'+ x + ' .count').css("display","inline-block");
+                  $('#gameID-'+ x).append('<p>'+ gID +' '+ x + '<p class="pitch">' + ' Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
+                  if(Score.inningHalf =="Bottom")
+                    $('#game-'+ x +' .myRow .innScore').append(`Bot ${Score.currentInningOrdinal}`);
+                  else
+                    $('#game-'+ x +' .myRow .innScore').append(`Top ${Score.currentInningOrdinal}`);
+                    var first = 0;
+                    var seco = 0;
+                    var thi = 0;
 
-                }
-            else if(response.gameData.status.abstractGameCode == "F"){
-              var winPitch = response.liveData.decisions.winner.fullName;
-              var losePitch = response.liveData.decisions.loser.fullName;
-                if(response.liveData.decisions.save == null)
-                  var savePitch = "No Save";
+                    if(Score.offense.first == null)
+                      first = 0;
+                    else
+                    { first = 1;}
+                    if(Score.offense.second == null)
+                       seco = 0;
+                    else
+                    {seco= 1;}
+                    if(Score.offense.third == null)
+                       thi = 0;
+                    else
+                    {thi= 1;}
 
-              else {
-                  var savePitch = response.liveData.decisions.save.fullName;
+                    var base = [first, seco, thi];
+
+                    function onBase(color, i, x){
+
+                      console.log(x, "svg_"+i, "set");
+                      return $('#gameID-' + x + ' .svg_'+i).css("fill",color);
+
+
+                    }
+
+                    for(i=0; i<base.length; i++){
+                      if(base[i]===1)
+                      {
+                        var color = "red";
+                      }
+                      else{
+                      var color = "white";
+                    }
+                      onBase(color, i, x);
                     };
-                  }
-            if (response.gameData.status.abstractGameCode == "F")
-                {
-                  $('#gameID-'+ x).append('<p></br><p class="pitch">'+ 'WP: ' + winPitch + '</br>LP: ' + losePitch + '</br>Save: '+ savePitch + ' ' + '</p></p>');
+
+                    /*var bases = ["first","second","third"];
+
+                    var base = [0,0,0];
+
+                    for(i=0; i<bases.length; i++)
+                    {
+                      if(Score.offense[bases[i]] == null)
+                         base[i] = 0;
+                          else
+                        {base[i] = 1;}
+                    }
+
+                      function onBase(color, i, x){
+
+                        return $('#gameID-'+ x + ' .svg_'+i).css("fill",color);
+                      }
+                      //closes onBase funciton
+
+                 for(i=0; i<base.length; i++){
+                   //console.log(base[i],i);
+                   if(base[i]===1)
+                   {
+                     var color = "red";
+                   }
+                   else{
+                   var color = "white";
+                 }
+                   onBase(color, i, x);
+                 };*/
+
+
+              //------------------------ Count
+
+              var bso = ["balls","strikes","outs"];
+
+              function BallStrOut(bso,y,x){
+                  if (bso === "balls"){
+                  color = "blue";
+                } else {
+                  color = "red";
                 }
-            else if(response.gameData.status.abstractGameCode == "L") {
-              $('.tScores .scoring .bases').clone().appendTo('#gameID-'+ x);
-              $('#gameID-'+ x + ' .bases').css("display","grid");
-              $('.tScores .scoring .BSO').clone().appendTo('#gameID-'+ x);
-              //$('#gameID-'+ x + ' .BSO').css("display","inline-block");
-              //$('.tScores .scoring .count').clone().appendTo('#gameID-'+ x);
-              $('#gameID-'+ x + ' .count').css("display","inline-block");
-              $('#gameID-'+ x).append('<p>'+ gID +' '+ x + '<p class="pitch">' + ' Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
+              return $('#gameID-'+ x + ' .' + bso + ' .count:nth-child(-n+'+ (y+1) + ')').css("background-color",`${color}`);
+              }
+              for(i=0;i<3;i++){
+               BallStrOut(bso[i],Score[bso[i]],x);
 
               }
-          //};
-//creates boxscore
-//---------
+            }//end game if live
+                //}
+            else if(response.gameData.status.abstractGameCode == "F"){
+              var winPitch = response.liveData.decisions.winner;
+              var losePitch = response.liveData.decisions.loser;
+              var winPitchName = response.liveData.decisions.winner.fullName;
+              var losePitchName = response.liveData.decisions.loser.fullName;
+              //$('#game-'+ x).append(`<p class="records">${hTeamID} ${hRecord}</br>${aTeamID} ${aRecord}</br></p>`);
+              $('#game-'+ x +' .myRow .innScore').append('Final');
+              function pitchRecord(x, link, result){
+              $.ajax({
+                url: 'https://statsapi.mlb.com:443'+link+'/stats?stats=season',
+                type: 'GET',
+                data:
+                {
+                  format: 'json'
+                },
+                  success: function(response)
+                  {
+                    if(result == "save")
+                      $('#gameID-'+x+' .records .'+result).append(": S: "+response.stats[0].splits[0].stat.saves+" - O: "+response.stats[0].splits[0].stat.saveOpportunities);
+                    else
+                      $('#gameID-'+x+' .records .'+result).append(": "+response.stats[0].splits[0].stat.wins+"-"+response.stats[0].splits[0].stat.losses);
+                  }
+                });
+              }
+              if(response.liveData.decisions.save == null){
+                $('#gameID-'+ x).append('<p></br><p class="records">'+ '<span class="win"> '+ hRecord + " " + 'WP: ' + winPitchName + '</span></br><span class="lose"> '+ aRecord + " " + 'LP: ' + losePitchName + '</span></p></p>');
+                var pitchName = [[winPitch.link, "win"],[losePitch.link,"lose"]];
 
-// check for final
-if(response.gameData.status.abstractGameCode == 'F')
-  $('#game-'+ x +' .myRow .innScore').append('Final');
-  //-------------This is what populates data based on if a game is live or not-------//
-else if(response.gameData.status.abstractGameCode == 'L'){
-//-------check for inning half
-  if(Score.inningHalf =="Bottom")
-    $('#game-'+ x +' .myRow .innScore').append(`Bot ${Score.currentInningOrdinal}`);
-  else
-    $('#game-'+ x +' .myRow .innScore').append(`Top ${Score.currentInningOrdinal}`);
+                for(i=0;i<pitchName.length;i++)
+                {
+                    pitchRecord(x,pitchName[i][0],pitchName[i][1]);
+                }
 }
-else
-  $('#game-'+ x +' .myRow .innScore').append(`${startTime}`);
+                  //var savePitchName = "No Save";
+              else if(response.liveData.decisions.save !== null) {
+                  var savePitch = response.liveData.decisions.save;
+                  var savePitchName = response.liveData.decisions.save.fullName;
+
+                    $('#gameID-'+ x).append('<p></br><p class="pitch">'+ '<span class="win">WP: ' + winPitchName + '</span></br><span class="lose">LP: ' + losePitchName + '</span></br><span class="save">Save: '+ savePitchName + ' ' + '</span></p></p>');
+
+                    var pitchName = [[winPitch.link, "win"],[losePitch.link,"lose"],[savePitch.link,"save"]];
+
+                    for(i=0;i<pitchName.length;i++)
+                    {
+                        pitchRecord(x,pitchName[i][0],pitchName[i][1]);
+                    }
+                  };
+                }
+//goes to else if check for game is final
+            else if(response.gameData.status.abstractGameCode == 'P')
+                  {
+                    var homeProb = response.gameData.probablePitchers.home.fullName;
+                    var awayProb = response.gameData.probablePitchers.away.fullName;
+                    $('#gameID-'+ x).append('<p><p class="pitch">'+ '<span class="home">Home Pitcher: ' + homeProb + '</span></br><span class="away">Away Pitcher: ' + awayProb + '</span></p></p>');
+                    $('#game-'+ x +' .myRow .innScore').append(`${startTime}`);
+                  }
 //----------------The Below section adds the actual boxscore table
 $('#game-'+ x +' .myRow').append(`<th id="i1" class="inning">1</th><th id="i2" class="inning">2</th><th id="i3" class="inning">3</th><th id="i4" class="inning">4</th><th id="i5" class="inning">5</th><th id="i6" class="inning">6</th><th id="i7" class="inning">7</th><th id="i8" class="inning">8</th><th id="i9" class="inning">9</th>`)
 $('#game-'+ x +' .home').append(`<th>${hTeam}</th><td class="inning" id="h1"></td><td class="inning" id="h2"></td><td class="inning" id="h3"></td><td class="inning" id="h4"></td><td class="inning" id="h5"></td><td class="inning" id="h6"></td><td class="inning" id="h7"></td><td class="inning" id="h8"></td><td class="inning" id="h9"></td>`);
 $('#game-'+ x +' .away').append(`<th>${aTeam}</th><td class="inning" id="r1"></td><td class="inning" id="r2"></td><td class="inning" id="r3"></td><td class="inning" id="r4"></td><td class="inning" id="r5"></td><td class="inning" id="r6"></td><td class="inning" id="r7"></td><td class="inning" id="r8"></td><td class="inning" id="r9"></td>`);
 $('#gameID-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTeamID}" class="button">All Matchups</a>`);
-//-----------------The Below if checks to see if a game is about to begin
-if(response.gameData.status.abstractGameCode == 'P')
-{
-  var homeProb = response.gameData.probablePitchers.home.fullName;
-  var awayProb = response.gameData.probablePitchers.away.fullName;
-  $('#game-'+ x +' .myRow').append(`<th style="display: table-cell;">Total</th>`);
-  $('#game-'+ x +' .home').append(`<th style="display: table-cell;">0</th>`);
-  $('#game-'+ x +' .away').append(`<th style="display: table-cell;">0</th>`);
-  $('#gameID-'+ x).append('<p><p class="pitch">'+ 'Home Pitcher: ' + homeProb + '</br>Away Pitcher: ' + awayProb + '</p></p>');
-}
 //-------------------Below Populates data into the boxscore if game is live
-else if(response.gameData.status.abstractGameCode == 'L'){
-    //----------Populates bases if runners are on
-          var first = 0;
-          var seco = 0;
-          var thi = 0;
-
-          if(Score.offense.first == null)
-            first = 0;
-          else
-          { first = 1;}
-          if(Score.offense.second == null)
-             seco = 0;
-          else
-          {seco= 1;}
-          if(Score.offense.third == null)
-             thi = 0;
-          else
-          {thi= 1;}
-
-          var base = [first, seco, thi];
-
-          function onBase(color, i, x){
-    //        for(j=0;j<base.length;j++)
-      //      {
-          //  if(base[j]===1){
-              //console.log(base, base[j],x, "svg_"+i, "set");
-            console.log(x, "svg_"+i, "set");
-            //return $('#gameID-'+ x + ' #svg_'+i).css("fill","red");
-            return $('#gameID-' + x + ' .svg_'+i).css("fill",color);
-        //  }
-            //else {
-              //console.log(base, base[j],x, "svg_"+i, "dont set");
-            //}
-          //}
-
-          }
-
-          for(i=0; i<base.length; i++){
-            //console.log("These are the values", base[i], i, x);
-            //console.log("On Base function i", i)
-            if(base[i]===1)
-            {
-              var color = "red";
-            }
-            else{
-            var color = "white";
-          }
-            onBase(color, i, x);
-          };
-    //------------------------ Count
-
-
-    var bso = ["balls","strikes","outs"];
-
-    function BallStrOut(bso,y,x){
-        if (bso === "balls"){
-        color = "blue";
-      } else {
-        color = "red";
-      }
-    return $('#gameID-'+ x + ' .' + bso + ' .count:nth-child(-n+'+ (y+1) + ')').css("background-color",`${color}`);
-    }
-    for(i=0;i<3;i++){
-     BallStrOut(bso[i],Score[bso[i]],x);
-      //console.log(bso[i],Score[bso[i]]);
-
-    }
-    //------------------------
-}
         for(var i=0; i < innings.length; i++)
         {
           var inning = parseInt(innings[i].ordinalNum);
@@ -227,8 +259,14 @@ else if(response.gameData.status.abstractGameCode == 'L'){
 
           }
        };//closes for loop
+
+
         $('#game-'+ x +' .myRow').append(`<th style="display: table-cell;">Total</th>`);
+        if(isNaN(hTotal))
+          hTotal=0;
         $('#game-'+ x +' .home').append(`<th style="display: table-cell;">${hTotal}</th>`);
+        if(isNaN(aTotal))
+          aTotal=0;
         $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>`);
 
 

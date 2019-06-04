@@ -5,10 +5,17 @@ var dd = today.getDate();
 var mm = today.getMonth()+1;
 var yyyy = today.getFullYear();
 var day1 = mm+"/"+dd+"/"+yyyy;
+//import { day1 } from 'index.html';
+/*
+function getDate(){
+  day1 = document.getElementById("datepicker").value;
+  return console.log(day1);
+};
 
+getDate();*/
 $.ajax({
       //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
-      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=05/15/2019&endDate=05/15/2019',
+      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=06/01/2019&endDate=06/01/2019',
       type: 'GET',
       data:
       {
@@ -57,8 +64,19 @@ $.ajax({
             var dateId = response.games;
             var gameData = response.gameData;
             var startTime = gameData.datetime.time + " " + gameData.datetime.ampm;
-            var hRecord = response.gameData.teams.home.record.wins+ "-" + response.gameData.teams.home.record.losses;
-            var aRecord = response.gameData.teams.away.record.wins +"-" + response.gameData.teams.away.record.losses;
+//--------------- Jquery UI parts
+            $( function() {
+              $( document ).tooltip();
+            } );
+
+            $( function() {
+              $( "#datepicker" ).datepicker({
+                changeMonth: true,
+                changeYear: true
+              });
+            } );
+
+//---------------
 
   //This section of code implements winning/losing/saving pitcher or who is the current pitcher/at bat
             if (response.gameData.status.abstractGameCode == "L")
@@ -70,7 +88,7 @@ $.ajax({
                   $('#gameID-'+ x + ' .bases').css("display","grid");
                   $('.tScores .scoring .BSO').clone().appendTo('#gameID-'+ x);
                   $('#gameID-'+ x + ' .count').css("display","inline-block");
-                  $('#gameID-'+ x).append('<p>'+ gID +' '+ x + '<p class="pitch">' + ' Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
+                  $('#gameID-'+ x).append('<p>'+ gID +' '+ x + '<p class="pitch" title="Current Pitcher">' + ' Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
                   if(Score.inningHalf =="Bottom")
                     $('#game-'+ x +' .myRow .innScore').append(`Bot ${Score.currentInningOrdinal}`);
                   else
@@ -154,7 +172,7 @@ $.ajax({
                 } else {
                   color = "red";
                 }
-              return $('#gameID-'+ x + ' .' + bso + ' .count:nth-child(-n+'+ (y+1) + ')').css("background-color",`${color}`);
+              return $('#gameID-'+ x + ' #' + bso + ' .count:nth-child(-n+'+ (y+1) + ')').css("background-color",`${color}`);
               }
               for(i=0;i<3;i++){
                BallStrOut(bso[i],Score[bso[i]],x);
@@ -167,7 +185,6 @@ $.ajax({
               var losePitch = response.liveData.decisions.loser;
               var winPitchName = response.liveData.decisions.winner.fullName;
               var losePitchName = response.liveData.decisions.loser.fullName;
-              //$('#game-'+ x).append(`<p class="records">${hTeamID} ${hRecord}</br>${aTeamID} ${aRecord}</br></p>`);
               $('#game-'+ x +' .myRow .innScore').append('Final');
               function pitchRecord(x, link, result){
               $.ajax({
@@ -180,14 +197,14 @@ $.ajax({
                   success: function(response)
                   {
                     if(result == "save")
-                      $('#gameID-'+x+' .records .'+result).append(": S: "+response.stats[0].splits[0].stat.saves+" - O: "+response.stats[0].splits[0].stat.saveOpportunities);
+                      $('#gameID-'+x+' .pitch #'+result).append(": S: "+response.stats[0].splits[0].stat.saves+" - O: "+response.stats[0].splits[0].stat.saveOpportunities);
                     else
-                      $('#gameID-'+x+' .records .'+result).append(": "+response.stats[0].splits[0].stat.wins+"-"+response.stats[0].splits[0].stat.losses);
+                      $('#gameID-'+x+' .pitch #'+result).append(": "+response.stats[0].splits[0].stat.wins+"-"+response.stats[0].splits[0].stat.losses);
                   }
                 });
               }
               if(response.liveData.decisions.save == null){
-                $('#gameID-'+ x).append('<p></br><p class="records">'+ '<span class="win"> '+ hRecord + " " + 'WP: ' + winPitchName + '</span></br><span class="lose"> '+ aRecord + " " + 'LP: ' + losePitchName + '</span></p></p>');
+                $('#gameID-'+ x).append('<p></br><p class="pitch">'+ '<span id="win"><span class="pName" title="'+winPitchName+'">WP: </span>' + winPitchName + '</span></br><span id="lose"><span class="pName">LP: </span>' + losePitchName + '</span></p></p>');
                 var pitchName = [[winPitch.link, "win"],[losePitch.link,"lose"]];
 
                 for(i=0;i<pitchName.length;i++)
@@ -200,7 +217,7 @@ $.ajax({
                   var savePitch = response.liveData.decisions.save;
                   var savePitchName = response.liveData.decisions.save.fullName;
 
-                    $('#gameID-'+ x).append('<p></br><p class="pitch">'+ '<span class="win">WP: ' + winPitchName + '</span></br><span class="lose">LP: ' + losePitchName + '</span></br><span class="save">Save: '+ savePitchName + ' ' + '</span></p></p>');
+                    $('#gameID-'+ x).append('<p></br><p class="pitch">'+ '<span id="win"><span class="pName" title="'+winPitchName+'">WP: </span>' + winPitchName + '</span></br><span id="lose"><span class="pName">LP: </span>' + losePitchName + '</span></br><span id="save"><span class="pName">Save: </span>'+ savePitchName + ' ' + '</span></p></p>');
 
                     var pitchName = [[winPitch.link, "win"],[losePitch.link,"lose"],[savePitch.link,"save"]];
 

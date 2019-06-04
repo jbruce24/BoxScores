@@ -24,8 +24,15 @@
   margin-left: .5rem;
 }
 
-.BSO {
-  
+.pType {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+}
+
+.pName {
+  display: inline-block;
+  width: 2.4rem;
 }
 
 .count {
@@ -37,4 +44,8 @@
   border-radius: 50%;
   margin-left: .25rem;
   margin-bottom: .35rem;
+}
+
+#forDate{
+  /*padding:1rem;*/
 }

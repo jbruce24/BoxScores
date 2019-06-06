@@ -4,7 +4,7 @@ var today = new Date();
 var dd = today.getDate();
 var mm = today.getMonth()+1;
 var yyyy = today.getFullYear();
-var day1 = mm+"/"+dd+"/"+yyyy;
+var day2 = mm+"/"+dd+"/"+yyyy;
 //import { day1 } from 'index.html';
 /*
 function getDate(){
@@ -13,15 +13,22 @@ function getDate(){
 };
 
 getDate();*/
+
+//var url = 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1;
+
+function runFunction(){
+  var gameDate = $("#datepicker").val();
 $.ajax({
-      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
-      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=06/01/2019&endDate=06/01/2019',
+      //url: url,
+      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+gameDate+'&endDate='+gameDate,
+      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=06/01/2019&endDate=06/01/2019',
       type: 'GET',
       data:
       {
         format: 'json'
       },
     success: function(response) {
+      console.log("date is ", gameDate);
     var games = response.dates[0].games;
 
     function Games(i)
@@ -114,7 +121,7 @@ $.ajax({
 
                     function onBase(color, i, x){
 
-                      console.log(x, "svg_"+i, "set");
+                      //console.log(x, "svg_"+i, "set");
                       return $('#gameID-' + x + ' .svg_'+i).css("fill",color);
 
 
@@ -230,8 +237,16 @@ $.ajax({
 //goes to else if check for game is final
             else if(response.gameData.status.abstractGameCode == 'P')
                   {
-                    var homeProb = response.gameData.probablePitchers.home.fullName;
-                    var awayProb = response.gameData.probablePitchers.away.fullName;
+                    if (isNaN(response.gameData.probablePitchers.home))
+                      var homeProb = "TBA";
+                      else {
+                      homeProb = response.gameData.probablePitchers.home.fullName;
+                    }
+                    if (isNaN(response.gameData.probablePitchers.away))
+                      var awayProb = "TBA";
+                    else {
+                      awayProb = response.gameData.probablePitchers.away.fullName
+                    }
                     $('#gameID-'+ x).append('<p><p class="pitch">'+ '<span class="home">Home Pitcher: ' + homeProb + '</span></br><span class="away">Away Pitcher: ' + awayProb + '</span></p></p>');
                     $('#game-'+ x +' .myRow .innScore').append(`${startTime}`);
                   }
@@ -287,8 +302,8 @@ $('#gameID-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTe
         $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>`);
 
 
-        console.log("Home "+ hTeam, "Away " +aTeam);
-        console.log(gID, x);
+      //  console.log("Home "+ hTeam, "Away " +aTeam);
+        //console.log(gID, x);
       //}
 
        },
@@ -310,5 +325,13 @@ $('#gameID-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTe
       {
         $('#errors').text("There was an error processing your request. Please try again.")
       }
-  });
+
+});
+}
+runFunction();
+$("#forDate").click(function(){
+$(".tScores").empty();
+  runFunction();
+  //console.log("Date sent to URL ", day1);
+})
 });

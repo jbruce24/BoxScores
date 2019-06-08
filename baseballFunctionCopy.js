@@ -4,17 +4,31 @@ var today = new Date();
 var dd = today.getDate();
 var mm = today.getMonth()+1;
 var yyyy = today.getFullYear();
-var day1 = mm+"/"+dd+"/"+yyyy;
+var day2 = mm+"/"+dd+"/"+yyyy;
+//import { day1 } from 'index.html';
+/*
+function getDate(){
+  day1 = document.getElementById("datepicker").value;
+  return console.log(day1);
+};
 
+getDate();*/
+
+//var url = 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1;
+
+function runFunction(){
+  var gameDate = $("#datepicker").val();
 $.ajax({
-      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+day1+'&endDate='+day1,
-      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=05/15/2019&endDate=05/15/2019',
+      //url: url,
+      url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate='+gameDate+'&endDate='+gameDate,
+      //url: 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=06/01/2019&endDate=06/01/2019',
       type: 'GET',
       data:
       {
         format: 'json'
       },
     success: function(response) {
+      console.log("date is ", gameDate);
     var games = response.dates[0].games;
 
     function Games(i)
@@ -57,6 +71,19 @@ $.ajax({
             var dateId = response.games;
             var gameData = response.gameData;
             var startTime = gameData.datetime.time + " " + gameData.datetime.ampm;
+//--------------- Jquery UI parts
+            $( function() {
+              $( document ).tooltip();
+            } );
+
+            $( function() {
+              $( "#datepicker" ).datepicker({
+                changeMonth: true,
+                changeYear: true
+              });
+            } );
+
+//---------------
 
   //This section of code implements winning/losing/saving pitcher or who is the current pitcher/at bat
             if (response.gameData.status.abstractGameCode == "L")
@@ -68,7 +95,7 @@ $.ajax({
                   $('#gameID-'+ x + ' .bases').css("display","grid");
                   $('.tScores .scoring .BSO').clone().appendTo('#gameID-'+ x);
                   $('#gameID-'+ x + ' .count').css("display","inline-block");
-                  $('#gameID-'+ x).append('<p>'+ gID +' '+ x + '<p class="pitch">' + ' Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
+                  $('#gameID-'+ x).append('<p>'+ gID +' '+ x + '<p class="pitch" title="Current Pitcher">' + ' Pitcher: ' + currPitch + '</br>At Bat: ' + currBatter + '</br>On Deck: '+ onDeck + ' ' + '</p></p>');
                   if(Score.inningHalf =="Bottom")
                     $('#game-'+ x +' .myRow .innScore').append(`Bot ${Score.currentInningOrdinal}`);
                   else
@@ -92,10 +119,18 @@ $.ajax({
 
                     var base = [first, seco, thi];
 
-                    function onBase(color, i, x){
+                    function onBase(color, i, x, runnerName){
 
-                      console.log(x, "svg_"+i, "set");
-                      return $('#gameID-' + x + ' .svg_'+i).css("fill",color);
+                      //var runnerName = Score.offense.first.fullName;
+
+                      /*if(isNaN(Score.offense.first.fullName))
+                      {
+                        var runnerName = "Null";
+                      }
+*/
+                      //console.log(x, "svg_"+i, "set - Runner Name ", runnerName);
+                      return $('#gameID-' + x + ' .svg_'+i).attr('title', runnerName).css("fill",color);
+                      //return $('#gameID-' + x + ' .svg_'+i).css("fill",color);
 
 
                     }
@@ -108,39 +143,19 @@ $.ajax({
                       else{
                       var color = "white";
                     }
-                      onBase(color, i, x);
-                    };
-
-                    /*var bases = ["first","second","third"];
-
-                    var base = [0,0,0];
-
-                    for(i=0; i<bases.length; i++)
-                    {
-                      if(Score.offense[bases[i]] == null)
-                         base[i] = 0;
-                          else
-                        {base[i] = 1;}
+                    if(i===0)
+                      {var baseOn = "first";}
+                    else if(i===1)
+                      {var baseOn = "second";}
+                    else if(i===2)
+                      {var baseOn = "third";}
+                    if (Score.offense[baseOn] == null){
+                      var runnerName = baseOn;
                     }
-
-                      function onBase(color, i, x){
-
-                        return $('#gameID-'+ x + ' .svg_'+i).css("fill",color);
-                      }
-                      //closes onBase funciton
-
-                 for(i=0; i<base.length; i++){
-                   //console.log(base[i],i);
-                   if(base[i]===1)
-                   {
-                     var color = "red";
-                   }
-                   else{
-                   var color = "white";
-                 }
-                   onBase(color, i, x);
-                 };*/
-
+                    else
+                    {var runnerName = Score.offense[baseOn].fullName;}
+                      onBase(color, i, x, runnerName);
+                  };
 
               //------------------------ Count
 
@@ -152,7 +167,7 @@ $.ajax({
                 } else {
                   color = "red";
                 }
-              return $('#gameID-'+ x + ' .' + bso + ' .count:nth-child(-n+'+ (y+1) + ')').css("background-color",`${color}`);
+              return $('#gameID-'+ x + ' #' + bso + ' .count:nth-child(-n+'+ (y+1) + ')').css("background-color",`${color}`);
               }
               for(i=0;i<3;i++){
                BallStrOut(bso[i],Score[bso[i]],x);
@@ -177,14 +192,14 @@ $.ajax({
                   success: function(response)
                   {
                     if(result == "save")
-                      $('#gameID-'+x+' .pitch .'+result).append(": S: "+response.stats[0].splits[0].stat.saves+" - O: "+response.stats[0].splits[0].stat.saveOpportunities);
+                      $('#gameID-'+x+' .pitch #'+result).append(": S: "+response.stats[0].splits[0].stat.saves+" - O: "+response.stats[0].splits[0].stat.saveOpportunities);
                     else
-                      $('#gameID-'+x+' .pitch .'+result).append(": "+response.stats[0].splits[0].stat.wins+"-"+response.stats[0].splits[0].stat.losses);
+                      $('#gameID-'+x+' .pitch #'+result).append(": "+response.stats[0].splits[0].stat.wins+"-"+response.stats[0].splits[0].stat.losses);
                   }
                 });
               }
               if(response.liveData.decisions.save == null){
-                $('#gameID-'+ x).append('<p></br><p class="pitch">'+ '<span class="win">WP: ' + winPitchName + '</span></br><span class="lose">LP: ' + losePitchName + '</span></p></p>');
+                $('#gameID-'+ x).append('<p></br><p class="pitch">'+ '<span id="win"><span class="pName" title="'+winPitchName+'">WP: </span>' + winPitchName + '</span></br><span id="lose"><span class="pName">LP: </span>' + losePitchName + '</span></p></p>');
                 var pitchName = [[winPitch.link, "win"],[losePitch.link,"lose"]];
 
                 for(i=0;i<pitchName.length;i++)
@@ -197,7 +212,7 @@ $.ajax({
                   var savePitch = response.liveData.decisions.save;
                   var savePitchName = response.liveData.decisions.save.fullName;
 
-                    $('#gameID-'+ x).append('<p></br><p class="pitch">'+ '<span class="win">WP: ' + winPitchName + '</span></br><span class="lose">LP: ' + losePitchName + '</span></br><span class="save">Save: '+ savePitchName + ' ' + '</span></p></p>');
+                    $('#gameID-'+ x).append('<p></br><p class="pitch">'+ '<span id="win"><span class="pName" title="'+winPitchName+'">WP: </span>' + winPitchName + '</span></br><span id="lose"><span class="pName">LP: </span>' + losePitchName + '</span></br><span id="save"><span class="pName">Save: </span>'+ savePitchName + ' ' + '</span></p></p>');
 
                     var pitchName = [[winPitch.link, "win"],[losePitch.link,"lose"],[savePitch.link,"save"]];
 
@@ -210,8 +225,16 @@ $.ajax({
 //goes to else if check for game is final
             else if(response.gameData.status.abstractGameCode == 'P')
                   {
-                    var homeProb = response.gameData.probablePitchers.home.fullName;
-                    var awayProb = response.gameData.probablePitchers.away.fullName;
+                    if (isNaN(response.gameData.probablePitchers.home))
+                      var homeProb = "TBA";
+                      else {
+                      homeProb = response.gameData.probablePitchers.home.fullName;
+                    }
+                    if (isNaN(response.gameData.probablePitchers.away))
+                      var awayProb = "TBA";
+                    else {
+                      awayProb = response.gameData.probablePitchers.away.fullName
+                    }
                     $('#gameID-'+ x).append('<p><p class="pitch">'+ '<span class="home">Home Pitcher: ' + homeProb + '</span></br><span class="away">Away Pitcher: ' + awayProb + '</span></p></p>');
                     $('#game-'+ x +' .myRow .innScore').append(`${startTime}`);
                   }
@@ -267,8 +290,8 @@ $('#gameID-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTe
         $('#game-'+ x +' .away').append(`<th style="display: table-cell;">${aTotal}</th>`);
 
 
-        console.log("Home "+ hTeam, "Away " +aTeam);
-        console.log(gID, x);
+      //  console.log("Home "+ hTeam, "Away " +aTeam);
+        //console.log(gID, x);
       //}
 
        },
@@ -290,5 +313,13 @@ $('#gameID-'+ x).append(`<a href="gamesVsOpp.html?homeid=${hTeamID}&awayid=${aTe
       {
         $('#errors').text("There was an error processing your request. Please try again.")
       }
-  });
+
+});
+}
+runFunction();
+$("#forDate").click(function(){
+$(".tScores").empty();
+  runFunction();
+  //console.log("Date sent to URL ", day1);
+})
 });
